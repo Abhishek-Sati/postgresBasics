@@ -76,9 +76,12 @@ Router.post("/film_category", async (req, res) => {
     };
     const { rows: category } = await client.query(query);
     const category_id = category[0].category_id;
-    console.log(category_id);
     const query1 = {
-      text: `SELECT t5.title as Movie FROM (SELECT * FROM film t3 INNER JOIN (SELECT * FROM category t1 INNER JOIN film_category t2 ON t1.category_id=t2.category_id) t4 ON t3.film_id=t4.film_id) t5 where t5.category_id=${category_id}`
+      text: `select film.title,category.name
+             from film
+             inner join film_category on film_category.film_id=film.film_id
+             inner join category on category.category_id=film_category.category_id
+             where category.category_id=${category_id}`
     };
     const { rows } = await client.query(query1);
     res.send(rows);
